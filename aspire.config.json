@@ -1,0 +1,5 @@
+{
+  "appHost": {
+    "path": "CleanArchitecture.AppHost/CleanArchitecture.AppHost.csproj"
+  }
+}

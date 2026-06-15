@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="Application/Application.csproj" />
+  <Project Path="CleanArchitecture.AppHost/CleanArchitecture.AppHost.csproj" />
+  <Project Path="CleanArchitecture.ServiceDefaults/CleanArchitecture.ServiceDefaults.csproj" />
+  <Project Path="CleanArchitecture/CleanArchitecture.csproj" />
+  <Project Path="Domain/Domain.csproj" />
+  <Project Path="Infrastructure/Infrastructure.csproj" />
+</Solution>
