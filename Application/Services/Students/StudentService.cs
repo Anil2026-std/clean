@@ -22,10 +22,10 @@ namespace Application.UseCases.Students
         public async Task<Result<int>> CreateStudent(CreateStudentDto createStudentDto)
         {
 
-            return Result<int>.Failure(Error.Conflict("student.Create", "Valid", new Dictionary<string, object>
-            {
-                { "Age", "Age must be more than 10" }
-            }));
+            //return Result<int>.Failure(Error.Conflict("student.Create", "Valid", new Dictionary<string, object>
+            //{
+            //    { "Age", "Age must be more than 10" }
+            //}));
             var student = new Student(
                 name: createStudentDto.Name,
                 age: createStudentDto.Age,
@@ -41,7 +41,6 @@ namespace Application.UseCases.Students
 
             return Result<int>.Failure(Error.Validation("student.age","Age is required"));
 
-          // return Result<int>.Success(student.Id);
         }
     }
 }

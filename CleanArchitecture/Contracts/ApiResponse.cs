@@ -4,6 +4,8 @@
     {
         public bool IsSuccess { get; init; }
         public string? Message { get; init; }
+        public string? ErrorCode { get; init; }
+        public object? Errors { get; init; }
 
         public static ApiResponse Success(string? message = null)
         {
@@ -13,7 +15,9 @@
                 Message = message ?? "Operation successful."
             };
         }
+
     }
+
     public class ApiResponse<T> : ApiResponse
     {
         public T? Data { get; init; }
@@ -27,5 +31,6 @@
                 Message = message ?? "Operation successful."
             };
         }
+
     }
 }

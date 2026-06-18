@@ -1,5 +1,6 @@
 ﻿using Application.DTOs;
 using Application.UseCases.Students;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace CleanArchitecture.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class StudentsController : ApiControllerBase
     {
         private readonly StudentService _service;
@@ -22,5 +24,7 @@ namespace CleanArchitecture.Controllers
             var result = await _service.CreateStudent(dto);
             return ProcessResult(result);
         }
+
+      
     }
 }

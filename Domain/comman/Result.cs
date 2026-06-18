@@ -36,14 +36,18 @@ namespace Domain.comman
     {
         public T? Data { get; }
 
-        private Result(bool isSuccess, Error error, T? data)
+        private Result(bool isSuccess, Error error, T? data, IReadOnlyList<string>? validationErrors)
             : base(isSuccess, error)
         {
             Data = data;
         }
 
-        public static Result<T> Success(T data) => new(true, Error.None, data);
+        public static Result<T> Success(T data) => new(true, Error.None, data, null);
 
-        public static new Result<T> Failure(Error error) => new(false, error, default);
+        public static new Result<T> Failure(Error error) => new(false, error, default, null);
+
+        public static Result<T> ValidationFailure(List<string> errors)
+       => new(false, Error.Validation("Validation.Failed", "Validation failed"), default, errors);
+
     }
 }
