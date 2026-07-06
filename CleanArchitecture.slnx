@@ -4,6 +4,8 @@
   <Project Path="CleanArchitecture.ServiceDefaults/CleanArchitecture.ServiceDefaults.csproj" />
   <Project Path="CleanArchitecture/CleanArchitecture.csproj" />
   <Project Path="Domain/Domain.csproj" />
+  <Project Path="Frontend/Frontend.csproj" />
+  <Project Path="ImageServer/ImageServer.csproj" />
   <Project Path="Infrastructure/Infrastructure.csproj" />
   <Project Path="IntergrationTesting/IntergrationTesting.csproj" Id="cc5d1a39-8837-4ac2-a695-771e0e9e4131" />
   <Project Path="UnitTests/UnitTests.csproj" Id="d7323a6d-7ce2-47ea-8c1e-580ff9b5dbc5" />

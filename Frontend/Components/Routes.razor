@@ -1,0 +1,16 @@
+<CascadingAuthenticationState>
+    <Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+                <NotAuthorized>
+                    <div class="alert alert-danger p-4 m-4 text-center" style="max-width: 500px; margin: 4rem auto !important; border-radius: 12px; background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.2); color: #dc3545; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15); backdrop-filter: blur(10px);">
+                        <h4 style="font-weight: 600; margin-bottom: 1rem;">Access Denied</h4>
+                        <p style="margin-bottom: 1.5rem; color: #666;">You must be authenticated to view this page.</p>
+                        <a href="login" class="btn btn-danger" style="background: #dc3545; border: none; padding: 0.6rem 1.8rem; border-radius: 8px; font-weight: 500; text-decoration: none; color: white; display: inline-block; transition: all 0.2s;">Go to Login</a>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="routeData" Selector="h1" />
+        </Found>
+    </Router>
+</CascadingAuthenticationState>

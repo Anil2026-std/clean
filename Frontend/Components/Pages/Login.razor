@@ -1,0 +1,105 @@
+@page "/login"
+
+@using Frontend.Model
+@using Frontend.Service
+@using Microsoft.AspNetCore.Authentication
+@using System.Security.Claims
+@inject ApiHandler ApiHandler
+@inject NavigationManager NavigationManager
+
+<PageTitle>Login</PageTitle>
+
+<div class="login-page-container">
+    <div class="glow-orb-1"></div>
+    <div class="glow-orb-2"></div>
+
+    <div class="login-card">
+        <div class="login-header">
+            <h2>Welcome Back</h2>
+            <p>Please sign in to your account</p>
+        </div>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert-feedback alert-feedback-danger">
+                <span>@errorMessage</span>
+            </div>
+        }
+
+        <EditForm Model="loginModel" OnValidSubmit="HandleLogin" FormName="loginForm">
+            <DataAnnotationsValidator />
+
+            <div class="input-group-custom">
+                <InputText @bind-Value="loginModel.Username" 
+                           class="form-control-custom" 
+                           placeholder="Username" 
+                           id="username" />
+                <ValidationMessage For="@(() => loginModel.Username)" class="error-text" />
+            </div>
+
+            <div class="input-group-custom">
+                <InputText @bind-Value="loginModel.Password" 
+                           type="password" 
+                           class="form-control-custom" 
+                           placeholder="Password" 
+                           id="password" />
+                <ValidationMessage For="@(() => loginModel.Password)" class="error-text" />
+            </div>
+
+            <button type="submit" class="btn-login">
+                <span>Sign In</span>
+            </button>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter]
+    public HttpContext? HttpContext { get; set; }
+
+    [SupplyParameterFromForm]
+    public LoginRequest loginModel { get; set; } = default!;
+
+    private string? errorMessage;
+
+    protected override void OnInitialized()
+    {
+        loginModel ??= new();
+    }
+
+    private async Task HandleLogin()
+    {
+        if (HttpContext == null)
+        {
+            errorMessage = "Server error: HttpContext is not available.";
+            return;
+        }
+
+        errorMessage = null;
+
+        var response = await ApiHandler.PostAsync<LoginRequest, ApiResponse<AuthResponse>>(
+            ApiEndpoints.Login, 
+            loginModel, 
+            isAuth: false
+        );
+
+        if (response != null && response.IsSuccess && response.Data != null)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, loginModel.Username),
+                new Claim("access_token", response.Data.AccessToken)
+            };
+
+            var identity = new ClaimsIdentity(claims, "Cookies");
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync("Cookies", principal);
+            NavigationManager.NavigateTo("/list");
+        }
+        else
+        {
+            errorMessage = response?.Message ?? "Invalid username or password.";
+        }
+    }
+}

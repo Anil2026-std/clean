@@ -1,0 +1,47 @@
+﻿@page "/counter"
+@rendermode InteractiveServer
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<p role="status">Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<br />
+<br />
+<br />
+
+
+
+<p>Change after Enter</p>
+<input type="text" @bind="Test" @onkeydown="HandleKey" />
+<p>@Test</p>
+<br />
+
+
+<p>Live update </p>
+<input type="text" @bind="temp" @bind:event="oninput" />
+<p>@temp</p>
+
+
+@code {
+    private int currentCount = 0;
+    private string temp = "";
+    private string Test = "change me";
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+
+    private void HandleKey(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            Test = temp;
+        }
+    }
+
+   
+}

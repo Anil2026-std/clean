@@ -1,0 +1,42 @@
+﻿@page "/form"
+@rendermode InteractiveServer
+
+@using Frontend.Model
+<h3>User Form</h3>
+
+<EditForm Model="user" OnValidSubmit="HandleSubmit" FormName="UserForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label>Name:</label>
+        <InputText @bind-Value="user.Name" />
+    </div>
+
+    <div>
+        <label>Email:</label>
+        <InputText @bind-Value="user.Email" />
+    </div>
+
+    <div>
+        <label>Age:</label>
+        <InputNumber @bind-Value="user.Age" />
+    </div>
+
+    <button type="submit">Submit</button>
+</EditForm>
+
+@if (isSubmitted)
+{
+    <p><strong>Submitted:</strong> @user.Name (@user.Email), Age: @user.Age</p>
+}
+
+@code {
+    private UserModel user = new();
+    private bool isSubmitted = false;
+
+    private void HandleSubmit()
+    {
+        isSubmitted = true;
+    }
+}

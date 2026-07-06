@@ -1,0 +1,321 @@
+/* Scoped Styles for List.razor */
+
+.page-container {
+    padding: 2rem 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(236, 72, 153, 0.05) 0%, transparent 50%);
+    min-height: 85vh;
+}
+
+.page-header {
+    margin-bottom: 2.5rem;
+}
+
+.page-header h2 {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: #1e1b4b;
+    background: linear-gradient(135deg, #1e1b4b, #4f46e5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+.page-header p {
+    color: #64748b;
+    font-size: 1rem;
+}
+
+/* Two-column layout grid */
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+@media (min-width: 992px) {
+    .content-grid {
+        grid-template-columns: 1.1fr 1.9fr;
+    }
+}
+
+/* Beautiful custom cards */
+.glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-card:hover {
+    box-shadow: 0 15px 35px rgba(99, 102, 241, 0.04),
+                0 10px 25px rgba(0, 0, 0, 0.02);
+}
+
+.card-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #1e1b4b;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Custom form elements */
+.form-group-custom {
+    margin-bottom: 1.5rem;
+}
+
+.form-group-custom label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 0.5rem;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    pointer-events: none;
+    font-size: 1rem;
+}
+
+.form-control-custom {
+    width: 100%;
+    padding: 0.8rem 1rem 0.8rem 2.5rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+    color: #0f172a;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.form-control-custom:focus {
+    border-color: #6366f1;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+}
+
+/* Validation styling updates */
+.form-control-custom.is-invalid {
+    border-color: #f43f5e !important;
+    background-image: none !important;
+}
+
+.form-control-custom.is-invalid:focus {
+    box-shadow: 0 0 0 4px rgba(244, 63, 94, 0.12) !important;
+}
+
+.form-control-custom.is-valid {
+    border-color: #10b981 !important;
+    background-image: none !important;
+}
+
+.form-control-custom.is-valid:focus {
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12) !important;
+}
+
+.error-text {
+    font-size: 0.78rem;
+    color: #e11d48;
+    margin-top: 0.35rem;
+    display: block;
+}
+
+/* Rules checklist */
+.rules-list {
+    list-style: none;
+    padding: 0;
+    margin: 1.25rem 0;
+    font-size: 0.82rem;
+    background: rgba(248, 250, 252, 0.6);
+    border-radius: 8px;
+    padding: 0.85rem;
+    border: 1px solid #f1f5f9;
+}
+
+.rule-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+    color: #64748b;
+    transition: color 0.2s ease;
+}
+
+.rule-item:last-child {
+    margin-bottom: 0;
+}
+
+.rule-item.text-success {
+    color: #15803d !important;
+}
+
+.rule-item.text-danger {
+    color: #9f1239 !important;
+}
+
+/* Add Button */
+.btn-submit {
+    width: 100%;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-submit:hover:not(:disabled) {
+    box-shadow: 0 6px 18px rgba(79, 70, 229, 0.3);
+    background: linear-gradient(135deg, #4338ca, #4f46e5);
+}
+
+.btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* User List Layout */
+.users-table-container {
+    overflow-x: auto;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.users-table th {
+    padding: 1rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #475569;
+    border-bottom: 1.5px solid #e2e8f0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.users-table td {
+    padding: 1rem;
+    font-size: 0.95rem;
+    color: #0f172a;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.user-row {
+    transition: background-color 0.2s ease;
+    animation: slideIn 0.4s ease forwards;
+    opacity: 0;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.user-row:hover {
+    background-color: rgba(248, 250, 252, 0.8);
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+    color: #4f46e5;
+    font-weight: 700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+}
+
+.user-badge {
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    font-family: monospace;
+}
+
+/* Empty State / Loading State */
+.state-container {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    color: #64748b;
+}
+
+.state-container svg {
+    margin-bottom: 1rem;
+    color: #cbd5e1;
+}
+
+.shimmer-text {
+    animation: shimmerPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmerPulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+/* Alert formatting styling */
+.alert-container {
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.alert-danger {
+    background-color: #fff1f2;
+    border: 1px solid #ffe4e6;
+    color: #9f1239;
+}
+
+.alert-success {
+    background-color: #f0fdf4;
+    border: 1px solid #dcfce7;
+    color: #166534;
+}

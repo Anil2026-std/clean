@@ -1,4 +1,4 @@
-﻿using Application.DTOs;
+using Application.DTOs;
 using Application.Interfaces.IRepo;
 using Application.Services.UserServices;
 using Application.Validator;
@@ -10,8 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace CleanArchitecture.Controllers
 {
     [Route("api/[controller]")]
-    //[ApiController]
-    //[Authorize]
+    [ApiController]
+    [Authorize]
     public class UserController : ApiControllerBase
     {
         private readonly UserService _userService;
@@ -39,7 +39,7 @@ namespace CleanArchitecture.Controllers
         }
         [HttpGet]
         [Route("list")]
-        public async Task<IActionResult> GetUserList(string email)
+        public async Task<IActionResult> GetUserList()
         {
             var users = await _userService.GetAllUsersAsync();
             return ProcessResult(users);
