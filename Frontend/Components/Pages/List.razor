@@ -8,6 +8,8 @@
 @using Frontend.Service
 @inject ApiHandler ApiHandler
 @inject NavigationManager NavigationManager
+@inject IConfiguration Configuration
+@using System.Net.Http.Headers
 
 <PageTitle>User Directory</PageTitle>
 
@@ -20,9 +22,6 @@
     @if (!string.IsNullOrEmpty(errorMessage))
     {
         <div class="alert-container alert-danger">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
-            </svg>
             <span>@errorMessage</span>
         </div>
     }
@@ -30,9 +29,6 @@
     @if (!string.IsNullOrEmpty(successMessage))
     {
         <div class="alert-container alert-success">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-            </svg>
             <span>@successMessage</span>
         </div>
     }
@@ -40,31 +36,51 @@
     <div class="content-grid">
         <!-- Add User Column -->
         <div class="glass-card">
-            <h3 class="card-title">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16" style="color: #4f46e5;">
-                    <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0Zm-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
-                    <path d="M8.256 14a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z" />
-                </svg>
-                Create Credentials
-            </h3>
+            <h3 class="card-title">Create Credentials</h3>
 
-            <EditForm EditContext="editContext" OnValidSubmit="HandleSubmit" FormName="createUserForm">
+            <EditForm Model="user" OnValidSubmit="HandleSubmit" FormName="createUserForm">
                 <DataAnnotationsValidator />
+
+                <!-- Profile Image -->
+                <div class="form-group-custom">
+                    <label>Profile Image (Optional)</label>
+                    <div class="avatar-upload-container">
+                        <div class="avatar-preview-wrapper">
+                            @if (!string.IsNullOrEmpty(imagePreviewUrl))
+                            {
+                                <img src="@imagePreviewUrl" class="avatar-preview" alt="Preview" />
+                                <button type="button" class="btn-remove-avatar" @onclick="ClearSelectedFile">×</button>
+                            }
+                            else
+                            {
+                                <div class="avatar-placeholder">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16" style="color: #94a3b8;">
+                                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                                        <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                                    </svg>
+                                </div>
+                            }
+                        </div>
+                        <div class="upload-btn-wrapper">
+                            <button type="button" class="btn-select-avatar">Choose Image</button>
+                            <InputFile OnChange="HandleFileSelected" accept="image/png, image/jpeg, image/gif, image/webp" />
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(uploadError))
+                    {
+                        <span class="error-text">@uploadError</span>
+                    }
+                </div>
 
                 <div class="form-group-custom">
                     <label for="username">Username</label>
                     <div class="input-wrapper">
                         <input type="text"
-                               value="@user.Username"
-                               @oninput="(e) => UpdateField(() => user.Username, e.Value?.ToString())"
-                               class="@GetClass(() => user.Username)"
+                               @bind-value="user.Username"
+                               @bind-value:event="oninput"
+                               class="form-control-custom"
                                placeholder="Enter username"
                                id="username" />
-                        <span class="input-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
-                            </svg>
-                        </span>
                     </div>
                     <ValidationMessage For="@(() => user.Username)" class="error-text" />
                 </div>
@@ -73,88 +89,30 @@
                     <label for="password">Password</label>
                     <div class="input-wrapper">
                         <input type="password"
-                               value="@user.Password"
-                               @oninput="(e) => UpdateField(() => user.Password, e.Value?.ToString())"
-                               class="@GetClass(() => user.Password)"
+                               @bind-value="user.Password"
+                               @bind-value:event="oninput"
+                               class="form-control-custom"
                                placeholder="Enter secure password"
                                id="password" />
-                        <span class="input-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z" />
-                            </svg>
-                        </span>
                     </div>
                     <ValidationMessage For="@(() => user.Password)" class="error-text" />
                 </div>
 
                 <ul class="rules-list">
-                    <li class="rule-item @GetRuleClass(HasMinLength)">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
-                            @if (HasMinLength)
-                            {
-                                <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022z" />
-                            }
-                            else
-                            {
-                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                            }
-                        </svg>
-                        At least 8 characters
-                    </li>
-                    <li class="rule-item @GetRuleClass(HasUpper)">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
-                            @if (HasUpper)
-                            {
-                                <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022z" />
-                            }
-                            else
-                            {
-                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                            }
-                        </svg>
-                        One uppercase letter
-                    </li>
-                    <li class="rule-item @GetRuleClass(HasNumber)">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
-                            @if (HasNumber)
-                            {
-                                <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022z" />
-                            }
-                            else
-                            {
-                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                            }
-                        </svg>
-                        One number
-                    </li>
-                    <li class="rule-item @GetRuleClass(HasSpecial)">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
-                            @if (HasSpecial)
-                            {
-                                <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022z" />
-                            }
-                            else
-                            {
-                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                            }
-                        </svg>
-                        One special character
-                    </li>
+                    <li class="rule-item @GetRuleClass(HasMinLength)">• At least 8 characters</li>
+                    <li class="rule-item @GetRuleClass(HasUpper)">• One uppercase letter</li>
+                    <li class="rule-item @GetRuleClass(HasNumber)">• One number</li>
+                    <li class="rule-item @GetRuleClass(HasSpecial)">• One special character</li>
                 </ul>
 
                 <button type="submit" class="btn-submit" disabled="@(!isFormValid || isLoading)">
                     @if (isLoading)
                     {
-                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="width: 1.1rem; height: 1.1rem;"></span>
                         <span>Saving User...</span>
                     }
                     else
                     {
                         <span>Add User</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                        </svg>
                     }
                 </button>
             </EditForm>
@@ -162,26 +120,17 @@
 
         <!-- Users List Column -->
         <div class="glass-card">
-            <h3 class="card-title">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16" style="color: #6366f1;">
-                    <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
-                </svg>
-                Registered Users
-            </h3>
+            <h3 class="card-title">Registered Users</h3>
 
             @if (users == null)
             {
                 <div class="state-container">
-                    <div class="spinner-border text-primary mb-3" role="status" style="width: 2.5rem; height: 2.5rem;"></div>
-                    <p class="shimmer-text">Fetching user directories from server...</p>
+                    <p>Fetching user directories from server...</p>
                 </div>
             }
             else if (users.Count == 0)
             {
                 <div class="state-container">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8Zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.244.166-.99.822-1.677C8.487 10.63 9.72 10 12 10c.34 0 .654.016.944.049A4.743 4.743 0 0 0 12 9c-4 0-5 3-5 4s1 1 1 1h-.978ZM11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM7.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
-                    </svg>
                     <h5>No Registered Users</h5>
                     <p>Use the credentials panel to create a new user profile.</p>
                 </div>
@@ -203,10 +152,17 @@
                                 <tr class="user-row">
                                     <td>
                                         <div class="user-avatar">
-                                            @u.Username.Substring(0, Math.Min(2, u.Username.Length)).ToUpper()
+                                            @if (!string.IsNullOrEmpty(u.ImageUrl))
+                                            {
+                                                <img src="@($"{imageServerUrl}{u.ImageUrl}")" alt="Avatar" class="user-avatar-img" />
+                                            }
+                                            else
+                                            {
+                                                @u.Username.Substring(0, Math.Min(2, u.Username.Length)).ToUpper()
+                                            }
                                         </div>
                                     </td>
-                                    <td style="font-weight: 600; color: #1e1b4b;">
+                                    <td class="username-cell">
                                         @u.Username
                                     </td>
                                     <td>
@@ -225,16 +181,17 @@
 @code {
     private CreateUserDto user = new();
     private List<UserDto> users = new();
-    private EditContext editContext;
-    private bool isFormValid = false;
     private bool isLoading = false;
     private string? errorMessage;
     private string? successMessage;
 
+    private IBrowserFile? selectedFile;
+    private string? imagePreviewUrl;
+    private string? uploadError;
+    private string imageServerUrl => Configuration["ImageServerUrl"] ?? "https://localhost:7180";
+
     protected override async Task OnInitializedAsync()
     {
-        editContext = new EditContext(user);
-        editContext.OnFieldChanged += OnFieldChanged;
         await LoadUsers();
     }
 
@@ -242,7 +199,7 @@
     {
         try
         {
-            var response = await ApiHandler.GetAsync<ApiResponse<IEnumerable<UserDto>>>(ApiEndpoints.UserList, isAuth: true);
+            var response = await ApiHandler.GetAsync<ApiResponse<IEnumerable<UserDto>>>(ApiEndpoints.UserList);
             if (response != null && response.IsSuccess && response.Data != null)
             {
                 users = response.Data.ToList();
@@ -258,54 +215,125 @@
         }
     }
 
-    private void UpdateField<T>(Expression<Func<T>> fieldExpression, string? newValue)
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
     {
-        if (fieldExpression.Body is MemberExpression memberExpression)
+        uploadError = null;
+        var file = e.File;
+        if (file != null)
         {
-            var propertyInfo = memberExpression.Member as System.Reflection.PropertyInfo;
-            if (propertyInfo != null)
+            var maxFileSize = 10 * 1024 * 1024; // 10MB
+            if (file.Size > maxFileSize)
             {
-                propertyInfo.SetValue(user, newValue);
-                var fieldIdentifier = FieldIdentifier.Create(fieldExpression);
-                editContext.NotifyFieldChanged(fieldIdentifier);
+                uploadError = "File exceeds the 10MB size limit.";
+                return;
+            }
+
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+            var extension = Path.GetExtension(file.Name).ToLowerInvariant();
+            if (!allowedExtensions.Contains(extension))
+            {
+                uploadError = "Allowed file types: JPG, JPEG, PNG, GIF, WEBP.";
+                return;
+            }
+
+            selectedFile = file;
+
+            try
+            {
+                var resizedFile = await file.RequestImageFileAsync(file.ContentType, 200, 200);
+                var buffer = new byte[resizedFile.Size];
+                using var stream = resizedFile.OpenReadStream(maxFileSize);
+                await stream.ReadExactlyAsync(buffer);
+                imagePreviewUrl = $"data:{file.ContentType};base64,{Convert.ToBase64String(buffer)}";
+            }
+            catch (Exception ex)
+            {
+                uploadError = $"Error generating preview: {ex.Message}";
             }
         }
+    }
+
+    private void ClearSelectedFile()
+    {
+        selectedFile = null;
+        imagePreviewUrl = null;
+        uploadError = null;
     }
 
     private async Task HandleSubmit()
     {
         if (isLoading) return;
 
-        
         isLoading = true;
         errorMessage = null;
         successMessage = null;
 
-        var response = await ApiHandler.PostAsync<CreateUserDto, ApiResponse<UserDto>>(
+        string? uploadedImageUrl = null;
+
+        if (selectedFile != null)
+        {
+            try
+            {
+                var tokenResponse = await ApiHandler.GetAsync<MediaResponse>("api/Media/get-token");
+                if (tokenResponse == null || string.IsNullOrEmpty(tokenResponse.AccessToken))
+                {
+                    errorMessage = "Failed to obtain upload token from Media Server.";
+                    isLoading = false;
+                    return;
+                }
+
+                using var content = new MultipartFormDataContent();
+                var fileContent = new StreamContent(selectedFile.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024));
+                fileContent.Headers.ContentType = new MediaTypeHeaderValue(selectedFile.ContentType);
+                content.Add(fileContent, "file", selectedFile.Name);
+
+                using var uploadClient = new HttpClient();
+                uploadClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenResponse.AccessToken);
+
+                var uploadUrl = $"{imageServerUrl}/api/Media/upload?folderName=avatars";
+                var response = await uploadClient.PostAsync(uploadUrl, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var uploadResult = await response.Content.ReadFromJsonAsync<UploadResultDto>();
+                    uploadedImageUrl = uploadResult?.MediaUrl;
+                }
+                else
+                {
+                    var responseError = await response.Content.ReadAsStringAsync();
+                    errorMessage = $"Media Server Upload Failed: {responseError}";
+                    isLoading = false;
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                errorMessage = $"Error uploading avatar: {ex.Message}";
+                isLoading = false;
+                return;
+            }
+        }
+
+        user.ImageUrl = uploadedImageUrl;
+
+        var responseUser = await ApiHandler.PostAsync<CreateUserDto, ApiResponse<UserDto>>(
             ApiEndpoints.CreateUser,
             user,
             isAuth: true
         );
 
-        if (response != null && response.IsSuccess)
+        if (responseUser != null && responseUser.IsSuccess)
         {
-            successMessage = $"User '{response.Data?.Username}' created successfully!";
-
-            // Clear and recreate context
-            editContext.OnFieldChanged -= OnFieldChanged;
+            successMessage = $"User '{responseUser.Data?.Username}' created successfully!";
             user = new CreateUserDto();
-            editContext = new EditContext(user);
-            editContext.OnFieldChanged += OnFieldChanged;
-            isFormValid = false;
-           
+            ClearSelectedFile();
             await LoadUsers();
-            isLoading = false;
         }
         else
         {
-            errorMessage = response?.Message ?? "Failed to register user.";
-            isLoading = false;
+            errorMessage = responseUser?.Message ?? "Failed to register user.";
         }
+        isLoading = false;
     }
 
     private bool HasMinLength => !string.IsNullOrEmpty(user.Password) && user.Password.Length >= 8;
@@ -314,41 +342,10 @@
     private bool HasSpecial => !string.IsNullOrEmpty(user.Password) && user.Password.Any(ch => !char.IsLetterOrDigit(ch));
 
     private bool IsPasswordValid => HasMinLength && HasUpper && HasNumber && HasSpecial;
-
-    private void OnFieldChanged(object? sender, FieldChangedEventArgs e)
-    {
-        var isValid = !editContext.GetValidationMessages().Any();
-        isFormValid = isValid && IsPasswordValid;
-        InvokeAsync(StateHasChanged);
-    }
+    private bool isFormValid => !string.IsNullOrEmpty(user.Username) && user.Username.Length >= 3 && IsPasswordValid;
 
     private string GetRuleClass(bool condition)
     {
         return condition ? "text-success" : "text-danger";
-    }
-
-    private string GetClass<T>(Expression<Func<T>> field)
-    {
-        if (editContext == null || field == null)
-            return "form-control-custom";
-
-        FieldIdentifier fieldIdentifier;
-        try
-        {
-            fieldIdentifier = FieldIdentifier.Create(field);
-        }
-        catch
-        {
-            return "form-control-custom";
-        }
-
-        var messages = editContext.GetValidationMessages(fieldIdentifier);
-        var isValid = !messages.Any();
-        var isModified = editContext.IsModified(fieldIdentifier);
-
-        if (!isModified)
-            return "form-control-custom";
-
-        return isValid ? "form-control-custom is-valid" : "form-control-custom is-invalid";
     }
 }

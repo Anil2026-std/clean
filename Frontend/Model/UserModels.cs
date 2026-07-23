@@ -7,6 +7,7 @@ namespace Frontend.Model
     {
         public Guid Id { get; set; }
         public string Username { get; set; } = string.Empty;
+        public string? ImageUrl { get; set; }
     }
 
     public class CreateUserDto
@@ -17,5 +18,6 @@ namespace Frontend.Model
 
         [Required(ErrorMessage = "Password is required.")]
         public string Password { get; set; } = string.Empty;
+        public string? ImageUrl { get; set; }
     }
 }

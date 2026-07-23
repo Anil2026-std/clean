@@ -12,6 +12,7 @@ using Infrastructure.auth;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
+using Infrastructure.Services.ApiHndler;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -54,10 +55,13 @@ builder.Services.AddAuthentication(options =>
 });
 
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddSingleton<IExceptionMapper, DefaultExceptionMapper>();
 builder.Services.AddScoped<StudentService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<ApiHandler>();
 
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -84,7 +88,21 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddAuthorization();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendPolicy", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:3000") // your Next.js app
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials(); // IMPORTANT if using cookies/auth
+    });
+});
+
 var app = builder.Build();
+
+
 
 app.MapDefaultEndpoints();
 
@@ -110,6 +128,7 @@ app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
+app.UseCors("FrontendPolicy");
 app.UseAuthorization();
 
 app.MapControllers();

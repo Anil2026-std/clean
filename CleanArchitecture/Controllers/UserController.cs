@@ -11,7 +11,7 @@ namespace CleanArchitecture.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class UserController : ApiControllerBase
     {
         private readonly UserService _userService;

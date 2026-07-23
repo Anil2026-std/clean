@@ -1,4 +1,4 @@
-﻿using Application.DTOs;
+using Application.DTOs;
 using Application.Interfaces.IRepo;
 using Domain.comman;
 using Domain.Entities;
@@ -62,14 +62,16 @@ namespace Application.Services.UserServices
             var user = new User
             {
                 Username = createUserDto.Username,
-                PasswordHash = createUserDto.Password
+                PasswordHash = createUserDto.Password,
+                ImageUrl = createUserDto.ImageUrl
             };
             var userId = await _userRepository.CreateUser(user);
 
             UserDto userDto = new ()
             {
                 Id = userId,
-                Username = createUserDto.Username
+                Username = createUserDto.Username,
+                ImageUrl = createUserDto.ImageUrl
             };
 
             return Result<UserDto>.Success(userDto);

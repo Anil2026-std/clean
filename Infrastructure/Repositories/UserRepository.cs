@@ -1,4 +1,4 @@
-﻿using Application.DTOs;
+using Application.DTOs;
 using Application.Interfaces.IRepo;
 using Domain.Entities;
 using Infrastructure.Persistence;
@@ -53,6 +53,7 @@ namespace Infrastructure.Repositories
                    {
                        Id = u.Id,
                        Username = u.Username,
+                       ImageUrl = u.ImageUrl
                    }).ToListAsync();
         }
     }
